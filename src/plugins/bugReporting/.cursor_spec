@@ -1,0 +1,12 @@
+-- What is this?
+This is a plugin for a Fastify node server.
+
+-- Working Directory
+Only edit files in this directory - any other files should be ignored.
+
+
+-- Route Handling
+* ./handler.ts is the route handler
+* it should only accept post request.
+* The body body should have the following structor "" {"message": <string>, "traceId": <string>} ""
+* validate the post body.
