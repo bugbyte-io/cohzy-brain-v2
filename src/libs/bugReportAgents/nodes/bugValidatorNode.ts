@@ -1,10 +1,10 @@
-import { observe } from "@langchain/core/dist/utils/fast-json-patch/index.js";
-import { BugValidationRequest } from "../../../libs/portkey/index.js";
+import { BugValidationRequest } from "../../../libs/portkey/index";
 import {
   BugOperationType,
   BugValidationVariables,
-} from "../../../libs/portkey/types.js";
-import { BugValidationResponse } from "./bugValidationTypes.js";
+} from "@libs/portkey/types";
+import { BugValidationResponse } from "./bugValidationTypes";
+import { HumanMessage } from '@langchain/core/messages';
 
 /**
  * Example Node function that returns a static message.
@@ -12,12 +12,12 @@ import { BugValidationResponse } from "./bugValidationTypes.js";
  * @returns The updated state with a static message.
  */
 export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any }> => {
-  console.log("state", state.messages);
+  console.log("State in bugValidatorNode:", state);
 
   try {
     const vars: BugValidationVariables = {
-      language_statement: "",
-      observation: "",
+      language_statement: "Your response should be in English.",
+      observation: state.messages[0]?.content ?? "",
     };
 
     const portkey = new BugValidationRequest(
@@ -32,13 +32,11 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
     const { averageScore, lowestScoreKey } = calculateScore(validationData);
     console.log("Average Score:", averageScore, "Lowest Score Key:", lowestScoreKey);
 
-    const returnString = getLowestScoreMsg(validationData, lowestScoreKey)
+    const returnString = getLowestScoreMsg(validationData, lowestScoreKey);
 
-    return { ...state, averageScore, message: returnString };
+    return { ...state, averageScore, messages: [new HumanMessage(returnString)] };
   } catch (error) {
-    // Log the error for debugging purposes
     console.error("Error in bugValidatorNode:", error);
-    // Throw a new exception with a meaningful message
     throw new Error("Failed to validate the bug report. Please try again later.");
   }
 };
@@ -46,21 +44,15 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
 const getLowestScoreMsg = (validationData: BugValidationResponse, lowScoreKey: string) => {
   switch (lowScoreKey) {
     case "observation":
-      return validationData.evaluation.observationClarification
-      break;
-      case "explanation":
-        return validationData.evaluation.expectationClarification
-      break;
-      case "replication":
-        return validationData.evaluation.replicationClarification
-        break;
+      return validationData.evaluation.observationClarification;
+    case "explanation":
+      return validationData.evaluation.expectationClarification;
+    case "replication":
+      return validationData.evaluation.replicationClarification;
     default:
-      return "Can you provide more information? I don't have a clear understanding yet."
-      break;
+      return "Can you provide more information? I don't have a clear understanding yet.";
   }
-
-}
-
+};
 
 /**
  * Represents the result of the score calculation.
@@ -83,12 +75,8 @@ const calculateScore = (validationData: BugValidationResponse): ScoreCalculation
     replication: validationData.evaluation.replication,
   };
 
-  console.log('scores', scores)
-
   const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
-  console.log('totalScore', totalScore)
   const averageScore = totalScore / Object.values(scores).length;
-  console.log('averageScore', averageScore)
 
   type ScoreKeys = keyof typeof scores;
 

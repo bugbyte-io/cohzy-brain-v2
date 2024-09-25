@@ -18,5 +18,13 @@
     }
   },
   "include": ["./src/**/*.ts"],
-  "exclude": ["./node_modules", "./dist"]
+  "exclude": ["./node_modules", "./dist"],
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "fileExtensions": {
+      "inputGlob": "{js,jsx,mjs}",
+      "outputCheck": ["js", "json", "jsx", "mjs"]
+    }
+  }
 }

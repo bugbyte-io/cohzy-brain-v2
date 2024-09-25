@@ -1,5 +1,5 @@
 import { HumanMessage } from '@langchain/core/messages';
-import { createBugReportAgentGraph } from '../../libs/bugReportAgents/bugReportAgent.js';
+import { createBugReportAgentGraph } from '../../libs/bugReportAgents/bugReportAgent';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { FromSchema } from 'json-schema-to-ts';
 
@@ -24,33 +24,31 @@ type BugReportBody = FromSchema<typeof bugReportSchema>;
 async function handleBugReport(request: FastifyRequest<{ Body: BugReportBody }>, reply: FastifyReply): Promise<void> {
   const { message, traceId } = request.body;
 
-  console.log('fire')
   // Create the bug report agent graph
   const bugReportGraph = createBugReportAgentGraph();
 
   // Define initial state for the graph
   const initialState = {
-    messages: [new HumanMessage('This is a test message')],
+    messages: [new HumanMessage(message)], // Use the incoming message
     userInfo: traceId
   };
 
   // Run the graph and obtain the result state
   try {
     const resultState = await bugReportGraph.invoke(initialState);
+
     reply.code(200).send({
       status: 'success',
       result: resultState.messages
     });
   } catch (error) {
-  
-    console.log('error', error)
+    // Log the error for debugging purposes
+    console.error('Error:', error);
     reply.code(500).send({
       status: 'failure',
       result: 'something went wrong'
     });
-
   }
-
 }
 
 export default async function bugReportingPlugin(fastify: FastifyInstance): Promise<void> {

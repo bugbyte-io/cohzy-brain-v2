@@ -1,7 +1,7 @@
 import { Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { StateGraph, START, END } from "@langchain/langgraph";
-import { bugValidatorNode } from "./nodes/bugValidatorNode.js";
+import { bugValidatorNode } from "./nodes/bugValidatorNode";
 
 /**
  * Annotation for agent state containing messages and user information
