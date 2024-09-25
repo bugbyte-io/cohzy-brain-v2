@@ -1,20 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "_version": "20.1.0",
-  "extends": "@tsconfig/node20/tsconfig.json",
+  // "$schema": "https://json.schemastore.org/tsconfig",
+  // "_version": "20.1.0",
+  // "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    "target": "ES6",
-    "module": "Node16",
     "strict": true,
+    "allowJs": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
     "outDir": "./dist",
     "paths": {
-      "*": ["src/*"]
+      "@libs/*":["src/libs/*"]
     }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./node_modules", "./dist"]
 }

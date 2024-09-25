@@ -1,0 +1,58 @@
+-- What is this?
+ welp I need your help creating a multiagent llm workflow. I plan to use langGraph to build our implmentation 
+
+
+-- here are some libraries being used
+* langGraph
+* langChain
+* portkey-ai
+
+
+-- Here is where i think things make sense
+* ./index.ts should handle exporting.
+* ./bugReportAgent.ts will contain primary logic.
+* ./types.ts will contain type definitions.
+* ./nodes/bugValidatorNode.ts will contain the bugValidator node logic.
+
+
+-- How the langGraph works
+* the next few sections are going to go over how the graph should work. please remember I want this to be muiltagent. 
+
+-- Graph Nodes
+* entry
+* questionResponder
+* bugValidator
+* bugPlauseability
+* bugBuilder
+
+-- Graph Edges
+* entry -> questionResponder (ConditionalEdge)
+* entry -> bugValidator (ConditionalEdge)
+* entry -> bugPlauseability (ConditionalEdge)
+* entry -> bugBuilder (ConditionalEdge)
+* bugValidator -> bugPlauseability (ConditionalEdge)
+* bugPlauseability -> bugBuilder (ConditionalEdge)
+* questionResponder -> end
+* bugBuilder -> end
+
+-- bugValidator
+* uses portkey to a prompt.
+* two variables need to be passed to the llm "observation: BaseMessage[], language_statement: string"
+* the response from portkey will be in the following format
+-- schema start --
+{
+  evaluation: {
+    explanation: number,
+    observation: number,
+    replication: number,
+    expectationClarification: string,
+    observationClarification: string,
+    replicationClarification: string
+  }
+}
+-- schema end --
+* if explanation has the lowest score return the expectationClarification
+* if observation has the lowest score return the observationClarification
+* if replication has the lowest score return the replicationClarification
+* if none of the scores equal 0 go to the next node in the graph
+* if clarification is returned from bugValidator return that string to the client

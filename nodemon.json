@@ -2,7 +2,7 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["dist/*", "node_modules/*"],
-  "exec": "tsc && node dist/index.js",
+  "exec": "tsc --outDir ./dist && node dist/index.js",
   "restartable": "rs",
   "env": {
     "NODE_ENV": "development"
