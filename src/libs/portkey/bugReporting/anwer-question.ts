@@ -1,7 +1,7 @@
-import { PortkeyRequest } from './portkey-request.js';
-import { BugAgentRequestVariables } from './types.js';
+import { PortkeyRequest } from '../portkey-request.js';
+import { BugAgentRequestVariables } from '../types.js';
 
-export class BugBuilderRequest extends PortkeyRequest {
+export class answerQuestionRequest extends PortkeyRequest {
   protected validateVariables(): void {
     const variables = this.variables as BugAgentRequestVariables;
 

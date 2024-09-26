@@ -21,8 +21,9 @@ type BugReportBody = FromSchema<typeof bugReportSchema>;
  * @param request - Fastify request object.
  * @param reply - Fastify reply object.
  */
-async function handleBugReport(request: FastifyRequest<{ Body: BugReportBody }>, reply: FastifyReply): Promise<void> {
-  const { message, traceId } = request.body;
+// async function handleBugReport(request: FastifyRequest<{ Body: BugReportBody }>, reply: FastifyReply): Promise<void> {
+async function handleBugReport(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+  const { message, traceId } = request.body as BugReportBody;
 
   // Create the bug report agent graph
   const bugReportGraph = createBugReportAgentGraph();
@@ -36,10 +37,10 @@ async function handleBugReport(request: FastifyRequest<{ Body: BugReportBody }>,
   // Run the graph and obtain the result state
   try {
     const resultState = await bugReportGraph.invoke(initialState);
-
+    const lastMessage = resultState.messages[resultState.messages.length - 1];
     reply.code(200).send({
       status: 'success',
-      result: resultState.messages
+      result: lastMessage
     });
   } catch (error) {
     // Log the error for debugging purposes

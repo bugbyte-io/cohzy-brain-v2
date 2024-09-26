@@ -3,6 +3,7 @@ import { BaseMessage } from "@langchain/core/messages";
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { bugValidatorNode } from "./nodes/bugValidatorNode";
 import { bugEntryNode } from "./nodes/entryNode";
+import { answerQuestionNode } from "./nodes/answerNode";
 
 /**
  * Annotation for agent state containing messages, user information, and whether a question was asked.
@@ -24,8 +25,8 @@ const AgentState = Annotation.Root({
 /**
  * Determines the next node based on the askedQuestion state.
  */
-const determineNextNode = (state: typeof AgentState.State): "bugValidatorNode" | typeof END => {
-  return state.askedQuestion ? END : "bugValidatorNode";
+const determineNextNode = (state: typeof AgentState.State): "bugValidatorNode" | "answerQuestionNode" => {
+  return state.askedQuestion ? "answerQuestionNode" : "bugValidatorNode";
 };
 
 /**
@@ -34,12 +35,14 @@ const determineNextNode = (state: typeof AgentState.State): "bugValidatorNode" |
 const createBugReportAgentGraph = () => {
   const workflow = new StateGraph(AgentState)
     .addNode("bugEntryNode", bugEntryNode)
+    .addNode("answerQuestionNode", answerQuestionNode)
     .addNode("bugValidatorNode", bugValidatorNode)
     .addEdge(START, "bugEntryNode")
     .addConditionalEdges("bugEntryNode", determineNextNode, {
       bugValidatorNode: "bugValidatorNode",
-      [END]: END,
+      answerQuestionNode: "answerQuestionNode",
     })
+    .addEdge("answerQuestionNode", END)
     .addEdge("bugValidatorNode", END);
 
   return workflow.compile();

@@ -21,6 +21,7 @@ export abstract class PortkeyRequest {
   }
 
   private getPromptId = (promptId: BugOperationType) => {
+
     switch (promptId) {
       case BugOperationType.BUG_PLAUSIBILITY:
         return process.env.PORTKEY_PROMPT_ID_BUG_PLAUSIBILITY_ID;
@@ -31,6 +32,9 @@ export abstract class PortkeyRequest {
       case BugOperationType.BUG_VALIDATION:
         return process.env.PORTKEY_PROMPT_ID_BUG_VALIDATION_ID;
         break;
+        case BugOperationType.ANSWER_QUESTION:
+          return process.env.PORTKEY_PROMPT_ID_ANSWER_QUESTION_ID;
+          break; 
       default:
         return process.env.PORTKEY_PROMPT_ID_BUG_ENTRY_ID
         break;

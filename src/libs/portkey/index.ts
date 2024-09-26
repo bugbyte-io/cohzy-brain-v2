@@ -1,3 +1,4 @@
-export { BugValidationRequest } from './bug-validation-request.js';
-export { BugPlausibilityRequest } from './bug-plausibility-request.js';
-export { BugBuilderRequest } from './bug-builder-request.js';
+export * from './bugReporting/bug-validation-request';
+export * from './bugReporting/bug-plausibility-request'
+export * from './bugReporting/bug-builder-request';
+export * from './bugReporting/bug-entry-request';

@@ -1,4 +1,4 @@
-import { BugEntryRequest } from "@libs/portkey/bug-entry-request";
+import { BugEntryRequest } from "@libs/portkey";
 import {
   BugAgentRequestVariables,
   BugOperationType,

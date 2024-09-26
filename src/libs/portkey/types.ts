@@ -13,5 +13,6 @@ export enum BugOperationType {
   BUG_VALIDATION = "BUG_VALIDATION",
   BUG_PLAUSIBILITY = "BUG_PLAUSIBILITY",
   BUG_BUILDER = "BUG_BUILDER",
-  Entry = "Entry"
+  Entry = "Entry",
+  ANSWER_QUESTION = "ANSWER_QUESTION"
 }
