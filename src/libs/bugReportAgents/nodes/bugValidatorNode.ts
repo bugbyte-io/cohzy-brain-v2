@@ -12,7 +12,6 @@ import { HumanMessage } from '@langchain/core/messages';
  * @returns The updated state with a static message.
  */
 export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any }> => {
-  console.log("State in bugValidatorNode:", state);
 
   try {
     const vars: BugAgentRequestVariables = {
@@ -30,7 +29,6 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
     const validationData = JSON.parse(resp.choices[0].message.content) as BugValidationResponse;
 
     const { averageScore, lowestScoreKey } = calculateScore(validationData);
-    console.log("Average Score:", averageScore, "Lowest Score Key:", lowestScoreKey);
 
     const returnString = getLowestScoreMsg(validationData, lowestScoreKey);
 
