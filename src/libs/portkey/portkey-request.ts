@@ -1,15 +1,19 @@
 import { Portkey } from "portkey-ai";
-import { BugOperationType, SpecificPromptVariables } from "./types.js";
+import { BugOperationType, BugAgentRequestVariables } from "./types.js";
+
+export interface EntryVars {
+  userMsg: string
+}
 
 /**
  * Base class for Portkey requests.
  */
 export abstract class PortkeyRequest {
-  protected variables: SpecificPromptVariables;
+  protected variables: BugAgentRequestVariables |EntryVars;
   protected promptType: BugOperationType;
   protected apiKey: string;
 
-  constructor(variables: SpecificPromptVariables, promptType: BugOperationType) {
+  constructor(variables: BugAgentRequestVariables | EntryVars, promptType: BugOperationType) {
     this.apiKey = process.env.PORTKEY_API_KEY ?? "";
     this.variables = variables;
     this.promptType = promptType;
@@ -28,7 +32,7 @@ export abstract class PortkeyRequest {
         return process.env.PORTKEY_PROMPT_ID_BUG_VALIDATION_ID;
         break;
       default:
-        throw new Error("Undefined bug operation type");
+        return process.env.PORTKEY_PROMPT_ID_BUG_ENTRY_ID
         break;
     }
   };

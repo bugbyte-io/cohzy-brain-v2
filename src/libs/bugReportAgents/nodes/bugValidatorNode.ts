@@ -1,7 +1,7 @@
 import { BugValidationRequest } from "../../../libs/portkey/index";
 import {
   BugOperationType,
-  BugValidationVariables,
+  BugAgentRequestVariables,
 } from "@libs/portkey/types";
 import { BugValidationResponse } from "./bugValidationTypes";
 import { HumanMessage } from '@langchain/core/messages';
@@ -15,9 +15,9 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
   console.log("State in bugValidatorNode:", state);
 
   try {
-    const vars: BugValidationVariables = {
+    const vars: BugAgentRequestVariables = {
       language_statement: "Your response should be in English.",
-      observation: state.messages[0]?.content ?? "",
+      message: state.messages[0]?.content ?? "",
     };
 
     const portkey = new BugValidationRequest(
