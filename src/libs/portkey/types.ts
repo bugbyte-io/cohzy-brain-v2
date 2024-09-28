@@ -4,6 +4,7 @@
 export type BugAgentRequestVariables = {
   language_statement: string;
   message: string;
+  responseFormat?: string
 };
 
 /**

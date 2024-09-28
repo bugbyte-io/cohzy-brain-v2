@@ -1,0 +1,19 @@
+%%{init: {'flowchart': {'curve': 'linear'}}}%%
+graph TD;
+	__start__[__start__]:::startclass;
+	__end__[__end__]:::endclass;
+	bugEntryNode([bugEntryNode]):::otherclass;
+	answerQuestionNode([answerQuestionNode]):::otherclass;
+	bugValidatorNode([bugValidatorNode]):::otherclass;
+	bugPlausibilityNode([bugPlausibilityNode]):::otherclass;
+	__start__ --> bugEntryNode;
+	answerQuestionNode --> __end__;
+	bugValidatorNode --> __end__;
+	bugEntryNode -.-> bugPlausibilityNode;
+	bugEntryNode -.-> bugValidatorNode;
+	bugEntryNode -.-> answerQuestionNode;
+	bugPlausibilityNode -.-> bugValidatorNode;
+	bugPlausibilityNode -. end .-> __end__;
+	classDef startclass fill:#ffdfba;
+	classDef endclass fill:#baffc9;
+	classDef otherclass fill:#fad7de;
