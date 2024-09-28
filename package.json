@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "build": "tsc --outDir ./dist && && tsc-alias",
+    "build": "swc ./src -d ./dist && tsc-alias",
     "dev": "nodemon"
   },
   "author": "",
@@ -28,6 +28,8 @@
     "zod-to-json-schema": "^3.23.3"
   },
   "devDependencies": {
+    "@swc/cli": "^0.4.1-nightly.20240914",
+    "@swc/core": "^1.7.26",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^22.5.5",
     "nodemon": "^3.1.6",
