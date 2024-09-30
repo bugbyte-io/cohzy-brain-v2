@@ -1,4 +1,4 @@
-import { BugValidationRequest } from "../../../libs/portkey/index";
+import { BugValidationRequest } from "@libs/portkey/index";
 import {
   BugOperationType,
   BugAgentRequestVariables,
