@@ -57,7 +57,7 @@ const determinePlausabilityNext = (state: typeof AgentState.State) => {
   graphFlowNode('running determinePlausabilityNext')
   if (state.plausabilityPass === false) {
     graphFlowDecision('going to END')
-    return END
+    return 'end'
   } else {
     graphFlowDecision('going to bugValidatorNode')
     return "bugValidatorNode"
@@ -84,7 +84,7 @@ const createBugReportAgentGraph = () => {
       end: END
     })
     .addEdge("answerQuestionNode", END)
-    .addEdge("bugValidatorNode", END);
+    .addEdge("bugValidatorNode", END)
 
   // Compile the workflow to create the graph
   const graph = workflow.compile();

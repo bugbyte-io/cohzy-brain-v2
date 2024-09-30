@@ -1,5 +1,5 @@
 import { HumanMessage } from '@langchain/core/messages';
-import { createBugReportAgentGraph } from '../../libs/bugReportAgents/bugReportAgent';
+import { createBugReportAgentGraph } from '@libs/bugReportAgents/bugReportAgent';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { FromSchema } from 'json-schema-to-ts';
 

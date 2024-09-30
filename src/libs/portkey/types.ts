@@ -2,9 +2,10 @@
  * Specific types for each promptId.
  */
 export type BugAgentRequestVariables = {
-  language_statement: string;
+  language_statement?: string;
   message: string;
-  responseFormat?: string
+  useLanguage?: string
+  responseFormat?: string;
 };
 
 /**
@@ -15,5 +16,6 @@ export enum BugOperationType {
   BUG_PLAUSIBILITY = "BUG_PLAUSIBILITY",
   BUG_BUILDER = "BUG_BUILDER",
   Entry = "Entry",
-  ANSWER_QUESTION = "ANSWER_QUESTION"
+  ANSWER_QUESTION = "ANSWER_QUESTION",
 }
+

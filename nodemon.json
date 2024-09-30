@@ -2,7 +2,7 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["dist/*", "node_modules/*"],
-  "exec": "swc ./src -d ./dist && node dist/index.js",
+  "exec": "swc ./src -d ./dist && node dist/src/index.js",
   "restartable": "rs",
   "env": {
     "NODE_ENV": "development"

@@ -9,12 +9,12 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "module": "ESNext",
-    "target": "ESNext",
+    "target": "ES2023",
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "outDir": "./dist",
     "paths": {
-      "@libs/*":["src/libs/*"]
+      "@libs/*":["libs/*"]
     }
   },
   "include": ["./src/**/*.ts"],
