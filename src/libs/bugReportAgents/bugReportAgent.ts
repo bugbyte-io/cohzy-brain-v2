@@ -1,10 +1,10 @@
 import { Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { StateGraph, START, END } from "@langchain/langgraph";
-import { bugValidatorNode } from "./nodes/validation/bugValidatorNode";
+import { bugValidatorNode } from "./nodes/validation";
 import { bugEntryNode } from "./nodes/entryNode/entryNode";
 import { answerQuestionNode } from "../genericAgent/answerNode";
-import { bugPlausibilityNode } from "./nodes/plausabilityNode/bugPlausibilityNode";
+import { bugPlausibilityNode } from "./nodes/plausabilityNode";
 import * as fs from 'fs';
 import {graphFlowNode, graphFlowDecision} from "@libs/logging/flowLogger";
 

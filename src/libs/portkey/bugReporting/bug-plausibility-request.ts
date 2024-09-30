@@ -1,5 +1,5 @@
-import { PortkeyRequest } from '../portkey-request.js';
-import { BugAgentRequestVariables } from '../types.js';
+import { PortkeyRequest } from '../portkey-request';
+import { BugAgentRequestVariables } from '../types';
 
 export class BugPlausibilityRequest extends PortkeyRequest {
   protected validateVariables(): void {
