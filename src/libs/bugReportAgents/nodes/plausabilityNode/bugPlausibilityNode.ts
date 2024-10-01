@@ -3,13 +3,16 @@ import {
   BugOperationType,
   BugAgentRequestVariables,
 } from "@libs/portkey/types";
-import { HumanMessage } from "@langchain/core/messages";
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import {
   PlausibilityResponse,
   PlausibilityResponseSchema,
   responseSchemaString,
 } from "./types";
 import { graphFlowDebugInfo } from "@libs/logging/flowLogger";
+
+
+const MINSCORE = 40
 
 /**
  * Example Node function that returns a plausibility message.
@@ -20,9 +23,10 @@ export const bugPlausibilityNode = async (
   state: any
 ): Promise<{ [key: string]: any }> => {
   try {
+
     const vars: BugAgentRequestVariables = {
       useLanguage: "English",
-      message: state.messages[0]?.content ?? "",
+      messages: JSON.stringify(state.messages),
       responseFormat: JSON.stringify(responseSchemaString),
     };
 
@@ -38,11 +42,21 @@ export const bugPlausibilityNode = async (
       evaluatePlausibility(plausibilityData);
     graphFlowDebugInfo(`plausibilityScore:: ${plausibilityScore}`);
 
+    const messages=[]
+
+    if (plausibilityScore >= MINSCORE) {
+      const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} meeting or execeding the score minimum score of ${MINSCORE}.`
+      messages.push(new AIMessage(aiMessage))
+    } else {
+      const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} and does not meet the score minimum score of ${MINSCORE}.`
+      messages.push(new AIMessage(aiMessage))
+      messages.push(new AIMessage(plausibilityMessage))
+    }
+
     return {
-      ...state,
       plausabilityChecked: true,
-      plausabilityPass: plausibilityScore > 40, // Now checking > 40% instead of > 4
-      messages: [new HumanMessage(plausibilityMessage)],
+      plausabilityPass: plausibilityScore > 40, // Now checking > 40%
+      messages,
     };
   } catch (error) {
     console.error("Error in bugPlausibilityNode:", error);

@@ -1,7 +1,8 @@
 import { HumanMessage } from '@langchain/core/messages';
-import { createBugReportAgentGraph } from '@libs/bugReportAgents/bugReportAgent';
+import  BugReportAgentGraph from '@libs/bugReportAgents/bugReportAgent';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { FromSchema } from 'json-schema-to-ts';
+import { userInfo } from 'os';
 
 // Define the schema for the request body
 const bugReportSchema = {
@@ -26,7 +27,8 @@ async function handleBugReport(request: FastifyRequest, reply: FastifyReply): Pr
   const { message, traceId } = request.body as BugReportBody;
 
   // Create the bug report agent graph
-  const bugReportGraph = createBugReportAgentGraph();
+  const agent  = new BugReportAgentGraph()
+  const bugReportGraph = agent.createBugReportAgentGraph();
 
   // Define initial state for the graph
   const initialState = {
@@ -36,7 +38,15 @@ async function handleBugReport(request: FastifyRequest, reply: FastifyReply): Pr
 
   // Run the graph and obtain the result state
   try {
-    const resultState = await bugReportGraph.invoke(initialState);
+    const resultState = await bugReportGraph.invoke(initialState, {
+      configurable: {
+        traceId: traceId,    
+      },
+      metadata: {
+        userInfo
+      }
+    });
+
     const lastMessage = resultState.messages[resultState.messages.length - 1];
     reply.code(200).send({
       status: 'success',

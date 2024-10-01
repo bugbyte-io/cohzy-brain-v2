@@ -1,12 +1,10 @@
-import { BugEntryRequest } from "@libs/portkey";
+import { BugBuilderRequest } from "@libs/portkey";
 import {
   BugAgentRequestVariables,
   BugOperationType,
 } from "@libs/portkey/types";
-
-interface BugEntryResponse {
-  askedQuestion: boolean;
-}
+import { bugBuilderResponse, BugBuilderResponseSchema, bugSchemaString } from "./types";
+import { AIMessage } from "@langchain/core/messages";
 
 /**
  * EntryNode is responsible for handling the initial processing of bug reports.
@@ -17,20 +15,29 @@ export const bugBiulderNode = async (
 ): Promise<{ [key: string]: any }> => {
   try {
     const vars: BugAgentRequestVariables = {
-      language_statement: "Your response should be in English.",
-      message: state.messages[state.messages.length - 1]?.content ?? "",
+      useLanguage: "English",
+      messages: JSON.stringify(state.messages),
+      responseFormat: JSON.stringify(bugSchemaString),
     };
 
-    const portkey = new BugEntryRequest(vars, BugOperationType.Entry);
-
+    const portkey = new BugBuilderRequest(vars, BugOperationType.BUG_BUILDER);
     const resp = await portkey.makeRequest();
 
-    const responseContent = resp.choices[0].message.content;
-    const parsedResponse = JSON.parse(responseContent) as BugEntryResponse;
+    console.log('resp', resp.choices[0].message.content)
 
-    const { askedQuestion } = parsedResponse;
-    // Update the state with the new askedQuestion value
-    return { ...state, askedQuestion };
+    const responseContent = resp.choices[0].message.content;
+    const parsedResponse = JSON.parse(responseContent) as bugBuilderResponse;
+
+    const { evaluation } = parsedResponse;
+    console.log('evaluation', evaluation)
+
+    return {
+      messages: new AIMessage({
+        // @ts-expect-error complaining about a string, but works fine.
+        content: evaluation,
+        additional_kwargs: { displayBug: true},
+      }),
+    };
   } catch (error) {
     console.error("Error in bugEntryNode:", error);
     throw new Error(

@@ -2,8 +2,7 @@
  * Specific types for each promptId.
  */
 export type BugAgentRequestVariables = {
-  language_statement?: string;
-  message: string;
+  messages: string;
   useLanguage?: string
   responseFormat?: string;
 };

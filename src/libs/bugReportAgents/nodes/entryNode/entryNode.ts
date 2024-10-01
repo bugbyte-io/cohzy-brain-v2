@@ -17,20 +17,21 @@ export const bugEntryNode = async (
 ): Promise<{ [key: string]: any }> => {
   try {
     const vars: BugAgentRequestVariables = {
-      language_statement: "Your response should be in English.",
-      message: state.messages[state.messages.length - 1]?.content ?? "",
+      useLanguage: "English",
+      messages: JSON.stringify(state.messages),
     };
 
+    console.log('fire')
     const portkey = new BugEntryRequest(vars, BugOperationType.Entry);
-
     const resp = await portkey.makeRequest();
-
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as BugEntryResponse;
 
+    console.log('parsedResponse', parsedResponse)
+
     const { askedQuestion } = parsedResponse;
-    // Update the state with the new askedQuestion value
-    return { ...state, askedQuestion };
+    return { askedQuestion };
+    
   } catch (error) {
     console.error("Error in bugEntryNode:", error);
     throw new Error(

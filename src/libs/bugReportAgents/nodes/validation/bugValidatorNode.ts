@@ -4,7 +4,7 @@ import {
   BugAgentRequestVariables,
 } from "@libs/portkey/types";
 import { BugValidationResponse } from "./bugValidationTypes";
-import { HumanMessage } from '@langchain/core/messages';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 
 /**
  * Example Node function that returns a static message.
@@ -15,8 +15,9 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
 
   try {
     const vars: BugAgentRequestVariables = {
-      language_statement: "Your response should be in English.",
-      message: state.messages[0]?.content ?? "",
+      // language_statement: "Your response should be in English.",
+      useLanguage: 'English',
+      messages: JSON.stringify(state.messages),
     };
 
     const portkey = new BugValidationRequest(
@@ -32,7 +33,13 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
 
     const returnString = getLowestScoreMsg(validationData, lowestScoreKey);
 
-    return { ...state, averageScore, messages: [new HumanMessage(returnString)] };
+    let validationPass = false
+    if (averageScore > 0) {
+      validationPass = true
+    }
+
+    return { validationPass, messages: [new AIMessage(returnString)] };
+
   } catch (error) {
     console.error("Error in bugValidatorNode:", error);
     throw new Error("Failed to validate the bug report. Please try again later.");
