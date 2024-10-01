@@ -11,15 +11,13 @@ interface AnswerQuestionResponse {
  * This is a stub and should be implemented with the actual logic.
  */
 export const answerQuestionNode = async (state: any): Promise<{ [key: string]: any }> => {
-  console.log("State in AnswerQuestion:", state);
 
   try {
     const vars: BugAgentRequestVariables = {
-      language_statement: "Your response should be in English.",
-      message: state.messages[state.messages.length - 1]?.content ?? "",
+      useLanguage: "Your response should be in English.",
+      messages: state.messages[state.messages.length - 1]?.content ?? "",
     };
 
-    console.log("Variables to be sent:", vars);
 
     // This would be a new request type specific to the new node's functionality
     const portkey = new answerQuestionRequest(vars, BugOperationType.ANSWER_QUESTION);

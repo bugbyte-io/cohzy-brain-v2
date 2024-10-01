@@ -21,13 +21,10 @@ export const bugEntryNode = async (
       messages: JSON.stringify(state.messages),
     };
 
-    console.log('fire')
     const portkey = new BugEntryRequest(vars, BugOperationType.Entry);
     const resp = await portkey.makeRequest();
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as BugEntryResponse;
-
-    console.log('parsedResponse', parsedResponse)
 
     const { askedQuestion } = parsedResponse;
     return { askedQuestion };

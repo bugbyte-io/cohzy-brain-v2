@@ -23,13 +23,9 @@ export const bugBiulderNode = async (
     const portkey = new BugBuilderRequest(vars, BugOperationType.BUG_BUILDER);
     const resp = await portkey.makeRequest();
 
-    console.log('resp', resp.choices[0].message.content)
-
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as bugBuilderResponse;
-
     const { evaluation } = parsedResponse;
-    console.log('evaluation', evaluation)
 
     return {
       messages: new AIMessage({
