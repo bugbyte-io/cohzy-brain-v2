@@ -21,7 +21,7 @@ export const bugBiulderNode = async (
     };
 
     const portkey = new BugBuilderRequest(vars, BugOperationType.BUG_BUILDER);
-    const resp = await portkey.makeRequest();
+    const resp = await portkey.makeRequest(state.traceId, 'Bug Builder Node',state.userId);
 
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as bugBuilderResponse;

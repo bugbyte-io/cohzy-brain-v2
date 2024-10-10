@@ -43,6 +43,10 @@ class BugReportAgentGraph {
         reducer: (x, y) => (y !== undefined ? y : x !== undefined ? x : false),
         default: () => false,
       }),
+      traceId: Annotation<string | undefined>({
+        reducer: (x, y) => y || x || "",
+        default: () => "",
+      }),
     });
     this.AgentState = AgentState;
   };

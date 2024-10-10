@@ -35,7 +35,7 @@ export const bugPlausibilityNode = async (
       BugOperationType.BUG_PLAUSIBILITY
     );
 
-    const resp = await portkey.makeRequest();
+    const resp = await portkey.makeRequest(state.traceId, 'Plausibility Node',state.userId);
     const parsedResp = JSON.parse(resp.choices[0].message.content);
     const plausibilityData = PlausibilityResponseSchema.parse(parsedResp);
     const { plausibilityScore, plausibilityMessage } =

@@ -25,7 +25,7 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
       BugOperationType.BUG_VALIDATION
     );
 
-    const resp = await portkey.makeRequest();
+    const resp = await portkey.makeRequest(state.traceId, 'Validator Node',state.userId);
 
     const validationData = JSON.parse(resp.choices[0].message.content) as BugValidationResponse;
 

@@ -2,18 +2,21 @@ import { Portkey } from "portkey-ai";
 import { BugOperationType, BugAgentRequestVariables } from "./types.js";
 
 export interface EntryVars {
-  userMsg: string
+  userMsg: string;
 }
 
 /**
  * Base class for Portkey requests.
  */
 export abstract class PortkeyRequest {
-  protected variables: BugAgentRequestVariables |EntryVars;
+  protected variables: BugAgentRequestVariables | EntryVars;
   protected promptType: BugOperationType;
   protected apiKey: string;
 
-  constructor(variables: BugAgentRequestVariables | EntryVars, promptType: BugOperationType) {
+  constructor(
+    variables: BugAgentRequestVariables | EntryVars,
+    promptType: BugOperationType
+  ) {
     this.apiKey = process.env.PORTKEY_API_KEY ?? "";
     this.variables = variables;
     this.promptType = promptType;
@@ -21,7 +24,6 @@ export abstract class PortkeyRequest {
   }
 
   private getPromptId = (promptId: BugOperationType) => {
-
     switch (promptId) {
       case BugOperationType.BUG_PLAUSIBILITY:
         return process.env.PORTKEY_PROMPT_ID_BUG_PLAUSIBILITY_ID;
@@ -32,11 +34,11 @@ export abstract class PortkeyRequest {
       case BugOperationType.BUG_VALIDATION:
         return process.env.PORTKEY_PROMPT_ID_BUG_VALIDATION_ID;
         break;
-        case BugOperationType.ANSWER_QUESTION:
-          return process.env.PORTKEY_PROMPT_ID_ANSWER_QUESTION_ID;
-          break; 
+      case BugOperationType.ANSWER_QUESTION:
+        return process.env.PORTKEY_PROMPT_ID_ANSWER_QUESTION_ID;
+        break;
       default:
-        return process.env.PORTKEY_PROMPT_ID_BUG_ENTRY_ID
+        return process.env.PORTKEY_PROMPT_ID_BUG_ENTRY_ID;
         break;
     }
   };
@@ -49,17 +51,31 @@ export abstract class PortkeyRequest {
   /**
    * Make a PortKey request.
    */
-  public async makeRequest() {
+  public async makeRequest(
+    traceId: string,
+    spanName: string,
+    userId: string | number
+  ) {
     const portkey = new Portkey({
       apiKey: this.apiKey,
     });
 
-    const promptId = this.getPromptId(this.promptType)
+    const promptId = this.getPromptId(this.promptType);
 
-    const promptCompletion = await portkey.prompts.completions.create({
-      promptID: promptId,
-      variables: this.variables,
-    });
+
+    const promptCompletion = await portkey.prompts.completions.create(
+      {
+        promptID: promptId,
+        variables: this.variables,
+      },
+      {
+        traceID: traceId,
+        metadata: {
+          spanName,
+          _user: userId,
+        },
+      }
+    );
 
     return promptCompletion;
   }

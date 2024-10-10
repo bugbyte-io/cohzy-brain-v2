@@ -1,0 +1,71 @@
+# StateManager Specification
+
+## Overview
+The `StateManager` class is responsible for managing the state by interacting with Upstash. It provides methods to fetch and set state, as well as create a default state when no state is found.
+
+## Requirements
+
+1. **StateManager Class**
+    - The class should be named `StateManager`.
+    - It should manage the state by interacting with the `UpstashHandler`.
+
+2. **Constructor**
+    - The constructor should instantiate the `UpstashHandler`.
+
+3. **Methods**
+
+    - **fetchState**
+        - **Description**: Fetches state from Upstash.
+        - **Parameters**: `key` (string) - The key to fetch the state for.
+        - **Returns**: A Promise that resolves to a `ChatData` object. If no data is found, it returns a default state.
+        - **Error Handling**: Errors should be logged.
+
+    - **setState**
+        - **Description**: Stores state in Upstash.
+        - **Parameters**: `key` (string) - The key to store the state under.
+                     `state` (ChatData) - The state data to store.
+        - **Returns**: A Promise that resolves to void.
+
+    - **createDefaultState**
+        - **Description**: Creates a default state object.
+        - **Returns**: A `ChatData` object representing the default state.
+
+## Example Usage
+1. **Fetch State**
+    - Fetches the existing state based on the provided key. If state does not exist, return the default state.
+    ```typescript
+    stateManager.fetchState("exampleKey")
+      .then((state) => {
+        console.log("Fetched state:", state);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch state:", err);
+      });
+    ```
+
+2. **Set State**
+    - Stores the provided state under the given key.
+    ```typescript
+    const newState: ChatData = {
+      userId: "exampleUserId",
+      traceId: "exampleTraceId",
+      messages: [],
+      language: "en",
+      origin: "exampleOrigin",
+    };
+
+    stateManager.setState("exampleKey", newState)
+      .then(() => {
+        console.log("State stored successfully.");
+      })
+      .catch((err) => {
+        console.error("Failed to store state:", err);
+      });
+    ```
+
+3. **Create Default State**
+    - Generates a default state object.
+    ```typescript
+    const defaultState = stateManager.createDefaultState();
+    console.log("Default state:", defaultState);
+    ```
