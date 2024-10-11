@@ -5,6 +5,7 @@ import {
 } from "@libs/portkey/types";
 import { BugValidationResponse } from "./bugValidationTypes";
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 /**
  * Example Node function that returns a static message.
@@ -38,7 +39,10 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
       validationPass = true
     }
 
-    return { validationPass, messages: [new AIMessage(returnString)] };
+    const stateManager = new StateManager()
+    const updatedState = await stateManager.addMessage(state, "AiMessage", returnString)
+
+    return { validationPass, messages: updatedState.messages[-1] };
 
   } catch (error) {
     console.error("Error in bugValidatorNode:", error);

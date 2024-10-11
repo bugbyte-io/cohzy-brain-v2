@@ -9,13 +9,16 @@ import { bugPlausibilityNode } from "./nodes/plausabilityNode";
 import * as fs from "fs";
 import { graphFlowNode, graphFlowDecision } from "@libs/logging/flowLogger";
 import { bugBiulderNode } from "./nodes/bugBuilderNode";
+import { StateManager } from "./stateManager";
 
 class BugReportAgentGraph {
   private AgentState: any;
   private compiledGraph: any;
+  private stateManager: StateManager
   constructor() {
     this.createAgentState();
     this.createBugReportAgentGraph();
+    this.stateManager =  new StateManager()
   }
 
   private createAgentState = () => {
@@ -53,34 +56,52 @@ class BugReportAgentGraph {
 
   private determineNextNode = (state: typeof this.AgentState.State) => {
     graphFlowNode("running determineNextNode");
-
+    let returnState = "bugPlausibilityNode";
     if (state.askedQuestion) {
       graphFlowDecision("going to answerQuestionNode");
-      return "answerQuestionNode";
-    } else {
-      graphFlowDecision("going to bugPlausibilityNode");
-      return "bugPlausibilityNode";
+      returnState = "answerQuestionNode";
     }
+
+    if (state.validationPass) {
+      graphFlowDecision("going to bugBuilderNode");
+      returnState = 'bugBuilderNode'
+    }
+
+    if (!state.validationPass) {
+      graphFlowDecision("going to bugValidatorNode");
+      returnState = "bugValidatorNode";
+    }
+
+    if(!state.plausabilityPass) {
+      graphFlowDecision("going to bugPlausibilityNode");
+      returnState = "bugPlausibilityNode";
+    }
+
+    return returnState
   };
 
-  private determinePlausabilityNext = (state: typeof this.AgentState.State) => {
+  private determinePlausabilityNext = async (state: typeof this.AgentState.State) => {
     graphFlowNode("running determinePlausabilityNext");
     if (state.plausabilityPass === false) {
       graphFlowDecision("going to END");
       return "end";
     } else {
+
+      await this.stateManager.setState(state.traceId, state)
+      
       graphFlowDecision("going to bugValidatorNode");
       return "bugValidatorNode";
     }
   };
 
-  private determineValidationNext = (state: typeof this.AgentState.State) => {
+  private determineValidationNext = async (state: typeof this.AgentState.State) => {
     graphFlowNode("running determineValidationNext");
     
     if (state.validationPass === false) {
       graphFlowDecision("going to END");
       return "end";
     } else {
+      await this.stateManager.setState(state.traceId, state)
       graphFlowDecision("going to bugBuilderNode");
       return "bugBuilderNode";
     }
@@ -98,6 +119,7 @@ class BugReportAgentGraph {
         bugPlausibilityNode: "bugPlausibilityNode",
         bugValidatorNode: "bugValidatorNode",
         answerQuestionNode: "answerQuestionNode",
+        bugBiulderNode: 'bugBuilderNode'
       })
       .addConditionalEdges(
         "bugPlausibilityNode",

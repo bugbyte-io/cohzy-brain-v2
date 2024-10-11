@@ -10,6 +10,8 @@ import {
   responseSchemaString,
 } from "./types";
 import { graphFlowDebugInfo } from "@libs/logging/flowLogger";
+import { StateManager } from "@libs/bugReportAgents/stateManager";
+import { ChatData } from "@libs/upstash";
 
 
 const MINSCORE = 40
@@ -42,21 +44,29 @@ export const bugPlausibilityNode = async (
       evaluatePlausibility(plausibilityData);
     graphFlowDebugInfo(`plausibilityScore:: ${plausibilityScore}`);
 
-    const messages=[]
-
+    // const messages = []
+    const stateManager = new StateManager()
+    let updatedState:ChatData
     if (plausibilityScore >= MINSCORE) {
       const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} meeting or execeding the score minimum score of ${MINSCORE}.`
-      messages.push(new AIMessage(aiMessage))
+      // messages.push(new AIMessage(aiMessage))
+
+      updatedState = await stateManager.addMessage(state, "AiMessage", aiMessage)
+
     } else {
       const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} and does not meet the score minimum score of ${MINSCORE}.`
-      messages.push(new AIMessage(aiMessage))
-      messages.push(new AIMessage(plausibilityMessage))
+      // messages.push(new AIMessage(aiMessage))
+      // messages.push(new AIMessage(plausibilityMessage))
+      await stateManager.addMessage(state, "AiMessage", aiMessage)
+      updatedState = await stateManager.addMessage(state, "AiMessage", plausibilityMessage)
     }
+
+    const messages = updatedState.messages
 
     return {
       plausabilityChecked: true,
       plausabilityPass: plausibilityScore > 40, // Now checking > 40%
-      messages,
+      messages ,
     };
   } catch (error) {
     console.error("Error in bugPlausibilityNode:", error);
