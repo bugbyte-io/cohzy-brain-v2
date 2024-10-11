@@ -52,8 +52,6 @@ async function handleBugReport(
     state = await stateManager.addMessage(state, "HumanMessage", message);
   }
 
-  console.log("state", state);
-
   // Create the bug report agent graph
   const agent = new BugReportAgentGraph();
   const bugReportGraph = agent.createBugReportAgentGraph();
