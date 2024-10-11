@@ -1,14 +1,17 @@
 import Fastify from 'fastify';
 import healthcheck from './plugins/healthcheck.js';
-import bugReportingPlugin from './plugins/bugReporting/handler.js';
+import bugReportingPlugin from './plugins/bugReporting/createBugReport.js';
+
 import cors from '@fastify/cors'
 import dotenv from "dotenv";
+import { fetchStateHandler } from 'plugins/bugReporting/index.js';
 // Load environment variables
 dotenv.config();
 const server = Fastify();
 
 server.register(healthcheck);
 server.register(bugReportingPlugin);
+server.register(fetchStateHandler)
 
 // Allow CORS requests from localhost:3000
 await server.register(cors, {

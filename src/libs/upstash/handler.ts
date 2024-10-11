@@ -30,7 +30,6 @@ export class UpstashHandler {
    */
   public async fetchData(key: string): Promise<any> {
       const response = await this.redis.get(key);
-      console.log('fetchData:', response);
       return response;
   }
 
@@ -42,7 +41,6 @@ export class UpstashHandler {
    */
   public async storeData(key: string, data: ChatData): Promise<void> {
       const response = await this.redis.set(key, data);
-      console.log('storeData response:', response);
       if (!response ) {
         throw new Error(`Error storing data in redis`);
       }

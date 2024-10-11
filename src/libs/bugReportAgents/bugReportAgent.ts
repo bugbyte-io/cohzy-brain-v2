@@ -50,6 +50,10 @@ class BugReportAgentGraph {
         reducer: (x, y) => y || x || "",
         default: () => "",
       }),
+      bugBuildCompleted: Annotation<boolean>({
+        reducer: (x, y) => (y !== undefined ? y : x !== undefined ? x : false),
+        default: () => false,
+      }),
     });
     this.AgentState = AgentState;
   };

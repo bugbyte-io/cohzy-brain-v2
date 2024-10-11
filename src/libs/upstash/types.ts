@@ -18,7 +18,8 @@ const ChatDataSchema = z.object({
   language: z.string(),
   origin: z.string().optional(),
   validationPass: z.boolean(),
-  plausabilityPass: z.boolean()
+  plausabilityPass: z.boolean(),
+  bugBuildCompleted: z.boolean()
 });
 
 type ChatData = z.infer<typeof ChatDataSchema>;

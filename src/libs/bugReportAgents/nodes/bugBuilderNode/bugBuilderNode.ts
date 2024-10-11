@@ -5,10 +5,9 @@ import {
 } from "@libs/portkey/types";
 import {
   bugBuilderResponse,
-  BugBuilderResponseSchema,
-  bugSchemaString,
+  bugSchemaString
 } from "./types";
-import { AIMessage } from "@langchain/core/messages";
+
 import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 /**
@@ -47,11 +46,7 @@ export const bugBiulderNode = async (
     );
 
     return {
-      messages: new AIMessage({
-        // @ts-expect-error complaining about a string, but works fine.
-        content: evaluation,
-        additional_kwargs: { displayBug: true },
-      }),
+      bugBuildCompleted: true,
     };
   } catch (error) {
     console.error("Error in bugEntryNode:", error);

@@ -1,12 +1,7 @@
-import { HumanMessage } from "@langchain/core/messages";
 import BugReportAgentGraph from "@libs/bugReportAgents/bugReportAgent";
 import { StateManager } from "@libs/bugReportAgents/stateManager";
-import { UpstashHandler } from "@libs/upstash";
-import { trace } from "console";
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
-import { StatementSync } from "node:sqlite";
-import { userInfo } from "os";
 
 // Define the schema for the request body
 const bugReportSchema = {
@@ -45,7 +40,7 @@ async function handleBugReport(
   let state = traceId ? await stateManager.fetchState(traceId) : null;
 
   if (!state) {
-    state = await stateManager.createDefaultState(userId);
+    state = await stateManager.createDefaultState(userId, traceId);
   }
 
   if (!state.messages.find((msg) => msg.content === message)) {
@@ -61,13 +56,17 @@ async function handleBugReport(
     const resultState = await bugReportGraph.invoke(state, {
       configurable: {
         traceId: state.traceId,
-      },
-      metadata: {
-        userInfo,
-      },
+      }
     });
     const lastMessage = resultState.messages[resultState.messages.length - 1];
-    reply.code(200).send({ results: lastMessage, traceId: state.traceId });
+    const returnData = {
+      results: lastMessage,
+      traceId: state.traceId,
+      bugReportComplete: state.bugBuildCompleted,
+    };
+    console.log("return Data ::", JSON.stringify(returnData, null, 2));
+
+    reply.code(200).send(returnData);
   } catch (error) {
     // Log the error for debugging purposes
     console.error("Error:", error);

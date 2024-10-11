@@ -30,6 +30,7 @@ export class StateManager {
    * @returns {Promise<void>}
    */
   public async setState(key: string, state: ChatData): Promise<void> {
+    state.messages = state.messages.filter(message => message !== null);
     return await this.upstashHandler.storeData(key, state);
   }
 
@@ -39,10 +40,15 @@ export class StateManager {
    */
   public async createDefaultState(
     userId: string,
+    traceId: string | null, 
     language = "en",
     origin = "web"
   ): Promise<ChatData> {
-    const traceId = nanoid(26);
+    
+    if (!traceId) {
+      traceId = nanoid(26);
+    }
+
     const defaultState: ChatData = {
       language,
       messages: [],
@@ -50,7 +56,8 @@ export class StateManager {
       plausabilityPass: false,
       traceId,
       userId,
-      validationPass: false, 
+      validationPass: false,
+      bugBuildCompleted: false
     };
 
     await this.setState(traceId, defaultState);
@@ -59,7 +66,15 @@ export class StateManager {
   }
 
   public async addMessage(state: ChatData, role: "AiMessage" | "HumanMessage", content: string) {
+
+    if (!content || !role) {
+      return state
+    }
+
     state.messages.push({ role: role, content })
+
+    state.messages = state.messages.filter(message => message !== null);
+
     await this.setState(state.traceId, state)
     return state
   }
