@@ -5,13 +5,21 @@ import bugReportingPlugin from './plugins/bugReporting/createBugReport.js';
 import cors from '@fastify/cors'
 import dotenv from "dotenv";
 import { fetchStateHandler } from 'plugins/bugReporting/index.js';
+import {registerAdAiMessageRoute} from 'plugins/bugReporting/adAiMessage.js'
+
 // Load environment variables
 dotenv.config();
-const server = Fastify();
+const server = Fastify({
+  logger: {
+    level:"info"
+  }
+});
 
 server.register(healthcheck);
 server.register(bugReportingPlugin);
 server.register(fetchStateHandler)
+
+registerAdAiMessageRoute(server)
 
 // Allow CORS requests from localhost:3000
 await server.register(cors, {

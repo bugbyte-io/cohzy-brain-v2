@@ -11,10 +11,10 @@ import {
 import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 /**
- * EntryNode is responsible for handling the initial processing of bug reports.
- * It acts as the entry point node in the bug report handling pipeline.
+ * BugBuilderNode is responsible for building the final bug report.
+ * It processes the validated information and creates a structured bug report.
  */
-export const bugBiulderNode = async (
+export const bugBuilderNode = async (
   state: any
 ): Promise<{ [key: string]: any }> => {
   try {
@@ -33,7 +33,6 @@ export const bugBiulderNode = async (
 
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as bugBuilderResponse;
-    const { evaluation } = parsedResponse;
 
     const stateManager = new StateManager();
     await stateManager.addMessage(
@@ -42,16 +41,20 @@ export const bugBiulderNode = async (
       JSON.stringify({
         previous_bug_report: true,
         bugReport: parsedResponse.evaluation,
-      })
+      }),
+      true,
+      true
     );
 
+    // Update the state to indicate that bug building is completed
     return {
       bugBuildCompleted: true,
+      messages: state.messages,
     };
   } catch (error) {
-    console.error("Error in bugEntryNode:", error);
+    console.error("Error in bugBuilderNode:", error);
     throw new Error(
-      "Failed to validate the bug report. Please try again later."
+      "Failed to build the bug report. Please try again later."
     );
   }
 };

@@ -7,7 +7,9 @@ import {
 
 const message = z.object({
   role: z.enum(['AiMessage', 'HumanMessage']),
-  content: z.string()
+  content: z.string(),
+  display: z.boolean(),
+  bugBuildCompleted: z.boolean()
 })
 const messageArray = z.array(message);
 

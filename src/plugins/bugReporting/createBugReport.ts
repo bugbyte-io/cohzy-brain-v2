@@ -1,5 +1,6 @@
 import BugReportAgentGraph from "@libs/bugReportAgents/bugReportAgent";
 import { StateManager } from "@libs/bugReportAgents/stateManager";
+import { trace } from "console";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
 
@@ -10,9 +11,11 @@ const bugReportSchema = {
     message: { type: "string" },
     traceId: { type: "string" },
     userId: { type: "string" },
+    language: { type: "string" },
+    origin: {type: "string"}
   },
   required: ["message", "traceId"],
-  additionalProperties: false,
+  additionalProperties: true,
 } as const;
 
 type BugReportBody = FromSchema<typeof bugReportSchema>;
@@ -43,8 +46,15 @@ async function handleBugReport(
     state = await stateManager.createDefaultState(userId, traceId);
   }
 
-  if (!state.messages.find((msg) => msg.content === message)) {
-    state = await stateManager.addMessage(state, "HumanMessage", message);
+  if (!state.messages.find((msg) => {
+    console.log("msg::", msg)
+    if (msg) {
+      return msg.content === message
+    } else {
+      return
+    }
+  })) {
+    state = await stateManager.addMessage(state, "HumanMessage", message, true);
   }
 
   // Create the bug report agent graph
@@ -59,6 +69,10 @@ async function handleBugReport(
       }
     });
     const lastMessage = resultState.messages[resultState.messages.length - 1];
+    
+    state = await stateManager.fetchState(traceId)
+    // state = await stateManager.createDefaultState(userId, traceId);
+
     const returnData = {
       results: lastMessage,
       traceId: state.traceId,

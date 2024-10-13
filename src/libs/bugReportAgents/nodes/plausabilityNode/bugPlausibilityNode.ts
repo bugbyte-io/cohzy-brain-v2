@@ -51,14 +51,14 @@ export const bugPlausibilityNode = async (
       const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} meeting or execeding the score minimum score of ${MINSCORE}.`
       // messages.push(new AIMessage(aiMessage))
 
-      updatedState = await stateManager.addMessage(state, "AiMessage", aiMessage)
+      updatedState = await stateManager.addMessage(state, "AiMessage", aiMessage, false)
 
     } else {
       const aiMessage = `This submission has a pluaseability score of ${plausibilityScore} and does not meet the score minimum score of ${MINSCORE}.`
       // messages.push(new AIMessage(aiMessage))
       // messages.push(new AIMessage(plausibilityMessage))
-      await stateManager.addMessage(state, "AiMessage", aiMessage)
-      updatedState = await stateManager.addMessage(state, "AiMessage", plausibilityMessage)
+      await stateManager.addMessage(state, "AiMessage", aiMessage, false)
+      updatedState = await stateManager.addMessage(state, "AiMessage", plausibilityMessage, true)
     }
 
     const messages = updatedState.messages

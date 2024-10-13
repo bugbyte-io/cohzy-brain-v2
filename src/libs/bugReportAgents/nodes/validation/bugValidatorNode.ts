@@ -40,7 +40,7 @@ export const bugValidatorNode = async (state: any): Promise<{ [key: string]: any
     }
 
     const stateManager = new StateManager()
-    const updatedState = await stateManager.addMessage(state, "AiMessage", returnString)
+    const updatedState = await stateManager.addMessage(state, "AiMessage", returnString, true)
 
     return { validationPass, messages: updatedState.messages[-1] };
 

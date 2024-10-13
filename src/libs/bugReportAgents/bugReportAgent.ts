@@ -8,7 +8,7 @@ import { answerQuestionNode } from "../genericAgent/answerNode";
 import { bugPlausibilityNode } from "./nodes/plausabilityNode";
 import * as fs from "fs";
 import { graphFlowNode, graphFlowDecision } from "@libs/logging/flowLogger";
-import { bugBiulderNode } from "./nodes/bugBuilderNode";
+import {  bugBuilderNode } from "./nodes/bugBuilderNode";
 import { StateManager } from "./stateManager";
 
 class BugReportAgentGraph {
@@ -60,28 +60,35 @@ class BugReportAgentGraph {
 
   private determineNextNode = (state: typeof this.AgentState.State) => {
     graphFlowNode("running determineNextNode");
-    let returnState = "bugPlausibilityNode";
+    
+    if (state.bugBuildCompleted) {
+      graphFlowDecision("Bug build completed, going to END");
+      return END;
+    }
+
     if (state.askedQuestion) {
       graphFlowDecision("going to answerQuestionNode");
-      returnState = "answerQuestionNode";
+      return "answerQuestionNode";
     }
 
     if (state.validationPass) {
       graphFlowDecision("going to bugBuilderNode");
-      returnState = 'bugBuilderNode'
+      return 'bugBuilderNode';
     }
 
-    if (!state.validationPass) {
+    if (!state.validationPass && state.plausabilityPass) {
       graphFlowDecision("going to bugValidatorNode");
-      returnState = "bugValidatorNode";
+      return "bugValidatorNode";
     }
 
-    if(!state.plausabilityPass) {
+    if (!state.plausabilityPass) {
       graphFlowDecision("going to bugPlausibilityNode");
-      returnState = "bugPlausibilityNode";
+      return "bugPlausibilityNode";
     }
 
-    return returnState
+    // Default case if none of the conditions are met
+    graphFlowDecision("going to bugPlausibilityNode (default)");
+    return "bugPlausibilityNode";
   };
 
   private determinePlausabilityNext = async (state: typeof this.AgentState.State) => {
@@ -117,13 +124,13 @@ class BugReportAgentGraph {
       .addNode("answerQuestionNode", answerQuestionNode)
       .addNode("bugValidatorNode", bugValidatorNode)
       .addNode("bugPlausibilityNode", bugPlausibilityNode)
-      .addNode("bugBuilderNode", bugBiulderNode)
+      .addNode("bugBuilderNode", bugBuilderNode)
       .addEdge(START, "bugEntryNode")
       .addConditionalEdges("bugEntryNode", this.determineNextNode, {
         bugPlausibilityNode: "bugPlausibilityNode",
         bugValidatorNode: "bugValidatorNode",
         answerQuestionNode: "answerQuestionNode",
-        bugBiulderNode: 'bugBuilderNode'
+        bugBuilderNode: 'bugBuilderNode'
       })
       .addConditionalEdges(
         "bugPlausibilityNode",

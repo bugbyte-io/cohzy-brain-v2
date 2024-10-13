@@ -6,6 +6,7 @@ import { StateManager } from '../../libs/bugReportAgents/stateManager';
  *
  * @param fastify - The Fastify instance.
  */
+
 export async function fetchStateHandler(fastify: FastifyInstance) {
   fastify.get<{
     Params: { traceId: string };
@@ -14,14 +15,18 @@ export async function fetchStateHandler(fastify: FastifyInstance) {
 
     try {
       const stateManager = new StateManager();
-      const state = await stateManager.fetchState(traceId);
+      let state = await stateManager.fetchState(traceId);
+
+      if (!state) {
+        state = await stateManager.createDefaultState("unknown", traceId)
+      }
 
       if (!state) {
         reply.code(404).send({ error: 'State not found' });
         return;
       }
 
-      reply.send(state);
+      reply.send({messages: state.messages, traceId: state.traceId });
     } catch (error) {
       fastify.log.error(error);
       reply.code(500).send({ error: 'Internal Server Error' });

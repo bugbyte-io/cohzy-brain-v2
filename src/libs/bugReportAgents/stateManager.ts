@@ -39,7 +39,7 @@ export class StateManager {
    * @returns {ChatData}
    */
   public async createDefaultState(
-    userId: string,
+    userId: string |unknown,
     traceId: string | null, 
     language = "en",
     origin = "web"
@@ -65,13 +65,14 @@ export class StateManager {
     return defaultState;
   }
 
-  public async addMessage(state: ChatData, role: "AiMessage" | "HumanMessage", content: string) {
+  public async addMessage(state: ChatData, role: "AiMessage" | "HumanMessage", content: string, display: boolean ,bugBuildCompleted = false) {
 
     if (!content || !role) {
       return state
     }
 
-    state.messages.push({ role: role, content })
+    state.messages.push({ role: role, content, display, bugBuildCompleted })
+    state.bugBuildCompleted = bugBuildCompleted
 
     state.messages = state.messages.filter(message => message !== null);
 
