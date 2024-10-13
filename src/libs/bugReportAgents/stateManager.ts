@@ -39,7 +39,7 @@ export class StateManager {
    * @returns {ChatData}
    */
   public async createDefaultState(
-    userId: string |unknown,
+    userId: string |'unknown',
     traceId: string | null, 
     language = "en",
     origin = "web"
