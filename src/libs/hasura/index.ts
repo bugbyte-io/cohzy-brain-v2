@@ -5,9 +5,8 @@ import { BugReportEval } from "@libs/bugReportAgents/types";
 
 const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_id: uuid, $images: jsonb, $impact: Int, $observed: String, $replication_rate: Int, $short_description: String, $status: Int, $steps: json, $user_id: uuid, $type_code: Int ) {
   insert_bug_reports_one(object: {expected: $expected, files: $files, game_id: $game_id, images: $images, impact: $impact, observed: $observed, replication_rate: $replication_rate, short_description: $short_description, status: $status, steps: $steps, user_id: $user_id, type_code: $type_code}) {
-    expected
-    files
-    game_id
+    id
+    bug_id
   }
 }
 `
@@ -44,7 +43,8 @@ const createBugReport = async (state: BugReportEval, gameId: string) => {
     }),
   });
   const data = await response.json();
-  console.log("Hasura response:", JSON.stringify(data, null,  2));
+  console.log("Hasura response:", JSON.stringify(data, null, 2));
+  return data
 };
 
 export { createBugReport };

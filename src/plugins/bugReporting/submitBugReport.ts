@@ -30,10 +30,10 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       const lastMsg = state.messages[state.messages.length - 1]
       const bugData: BugReportEval = JSON.parse(lastMsg.content)
 
-      await createBugReport(bugData, gameId)
+      const saveData = await createBugReport(bugData, gameId)
 
       // Placeholder for bug report creation logic
-      reply.code(201).send({ message: 'Bug report created successfully.' });
+      reply.code(201).send({bugReportData: saveData });
     } catch (error) {
       fastify.log.error('Failed to create bug report:', error);
       reply.code(500).send({ message: 'Failed to create bug report due to an internal error.' });
