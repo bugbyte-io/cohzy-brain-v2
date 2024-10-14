@@ -34,7 +34,11 @@ await server.register(cors, {
 
 const port: number = process.env.NODE_ENV === 'production' ? 3000 : 3030;
 
-server.listen({ port, host:"0.0.0.0" }, (err, address) => {
+// Determine the host based on the NODE_ENV environment variable
+const host: string = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+
+server.listen({ port, host }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

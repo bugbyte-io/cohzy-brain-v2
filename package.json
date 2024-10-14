@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "build": "swc ./src -d ./dist && cp -r ./src/libs ./dist/libs",
-    "dev": "nodemon --config nodemon_prod.json"
+    "dev": "nodemon"
   },
   "author": "",
   "type": "module",
