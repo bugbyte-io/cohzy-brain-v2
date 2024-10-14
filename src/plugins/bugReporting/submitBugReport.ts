@@ -1,5 +1,6 @@
 import { StateManager } from '@libs/bugReportAgents/stateManager';
 import { BugReportEval } from '@libs/bugReportAgents/types';
+import { createBugReport } from '@libs/hasura';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 interface saveRequest {
@@ -17,6 +18,8 @@ interface BugReportState {
 export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
   fastify.post('/bugReport/create-bug-report', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
+      
+      const gameId = '2641339a-4129-406b-80da-b06281a1b2f6'
 
       console.log('data', request.body)
 
@@ -27,8 +30,7 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       const lastMsg = state.messages[state.messages.length - 1]
       const bugData: BugReportEval = JSON.parse(lastMsg.content)
 
-      console.log('bugData', bugData)
-
+      await createBugReport(bugData, gameId)
 
       // Placeholder for bug report creation logic
       reply.code(201).send({ message: 'Bug report created successfully.' });
