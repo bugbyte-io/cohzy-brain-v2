@@ -3,8 +3,8 @@ import { BugReportEval } from "@libs/bugReportAgents/types";
 
 
 
-const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_id: uuid, $images: jsonb, $impact: Int, $observed: String, $replication_rate: Int, $short_description: String, $status: Int, $steps: json, $user_id: uuid, $type_code: Int ) {
-  insert_bug_reports_one(object: {expected: $expected, files: $files, game_id: $game_id, images: $images, impact: $impact, observed: $observed, replication_rate: $replication_rate, short_description: $short_description, status: $status, steps: $steps, user_id: $user_id, type_code: $type_code}) {
+const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_id: uuid, $images: jsonb, $impact: Int, $observed: String, $replication_rate: Int, $short_description: String, $status: Int, $steps: json, $user_id: uuid, $type_code: Int, $discord_thread_id: String ) {
+  insert_bug_reports_one(object: {expected: $expected, files: $files, game_id: $game_id, images: $images, impact: $impact, observed: $observed, replication_rate: $replication_rate, short_description: $short_description, status: $status, steps: $steps, user_id: $user_id, type_code: $type_code, discord_thread_id: $discord_thread_id}) {
     id
     bug_id
   }
@@ -12,7 +12,7 @@ const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_i
 `
 
 
-const createBugReport = async (state: BugReportEval, gameId: string) => {
+const createBugReport = async (state: BugReportEval, gameId: string, discordThreadId: string) => {
   const url = process.env.HASURA_GRAPHQL_ENDPOINT ?? "";
 
   const requestHeaders: HeadersInit = new Headers();
@@ -21,7 +21,7 @@ const createBugReport = async (state: BugReportEval, gameId: string) => {
 
   const variables = {
     expected: state.bugReport.expected,
-    files: [],
+    files: state.bugReport.files,
     type_code: 1,
     replication_rate: 1,
     steps: state.bugReport.replicationSteps,
@@ -29,6 +29,7 @@ const createBugReport = async (state: BugReportEval, gameId: string) => {
     observed: state.bugReport.observed,
     game_id: gameId,
     user_id: '2b65d46a-ca72-4208-ae37-5b7020587d18',
+    discord_thread_id: discordThreadId,
     images: [],
     impact: 1,
     status: 1
@@ -43,7 +44,6 @@ const createBugReport = async (state: BugReportEval, gameId: string) => {
     }),
   });
   const data = await response.json();
-  console.log("Hasura response:", JSON.stringify(data, null, 2));
   return data
 };
 

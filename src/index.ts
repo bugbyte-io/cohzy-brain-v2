@@ -31,7 +31,10 @@ await server.register(cors, {
 });
 
 // Specify the port as a number
-server.listen({ port: 3030 }, (err, address) => {
+
+const port: number = process.env.NODE_ENV === 'production' ? 3000 : 3030;
+
+server.listen({ port, host:"0.0.0.0" }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

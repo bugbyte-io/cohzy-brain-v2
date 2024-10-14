@@ -1,10 +1,16 @@
 import { StateManager } from '@libs/bugReportAgents/stateManager';
 import { BugReportEval } from '@libs/bugReportAgents/types';
+import { createNewThread } from '@libs/discord/createBugReportThread';
 import { createBugReport } from '@libs/hasura';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
+export interface Files {
+  url:string
+}
+
 interface saveRequest {
   traceId: string
+  fileList: Files[]
 }
 
 interface BugReportState {
@@ -21,19 +27,21 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       
       const gameId = '2641339a-4129-406b-80da-b06281a1b2f6'
 
-      console.log('data', request.body)
-
-      const {traceId} = request.body as saveRequest
+      const {traceId, fileList} = request.body as saveRequest
 
       const stateManager = new StateManager()
       const state = await stateManager.fetchState(traceId)
       const lastMsg = state.messages[state.messages.length - 1]
       const bugData: BugReportEval = JSON.parse(lastMsg.content)
 
-      const saveData = await createBugReport(bugData, gameId)
+      bugData.bugReport.files = fileList
+      
+      const { threadId } = await createNewThread(bugData.bugReport, fileList)
+      const saveData = await createBugReport(bugData, gameId, threadId ?? "")
 
       // Placeholder for bug report creation logic
       reply.code(201).send({bugReportData: saveData });
+
     } catch (error) {
       fastify.log.error('Failed to create bug report:', error);
       reply.code(500).send({ message: 'Failed to create bug report due to an internal error.' });

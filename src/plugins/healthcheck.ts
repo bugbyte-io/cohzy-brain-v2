@@ -8,7 +8,6 @@ const healthcheck: FastifyPluginAsync = async (fastify, opts) => {
       timestamp: new Date().toISOString(),
       cpuUsage: process.cpuUsage(),
       memoryUsage: process.memoryUsage(),
-      availableMemory: process.availableMemory()
     };
   });
 };

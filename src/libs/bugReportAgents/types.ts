@@ -3,11 +3,15 @@ export interface BugReportEval {
   bugReport: BugReport;
 }
 
-interface BugReport {
+interface Files {
+  url:string
+}
+export interface BugReport {
   bugType: string;
   expected: string;
   observed: string;
   replicationRate: string;
   replicationSteps: string[];
   shortDescription: string;
+  files: Files[]
 }
