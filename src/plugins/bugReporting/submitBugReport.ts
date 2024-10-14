@@ -27,8 +27,8 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       
       const gameId = '2641339a-4129-406b-80da-b06281a1b2f6'
 
-      const {traceId, fileList} = request.body as saveRequest
-
+      const { traceId, fileList } = request.body as saveRequest
+    
       const stateManager = new StateManager()
       const state = await stateManager.fetchState(traceId)
       const lastMsg = state.messages[state.messages.length - 1]
