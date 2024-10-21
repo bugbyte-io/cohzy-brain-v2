@@ -1,4 +1,5 @@
 import { BugEntryRequest } from "@libs/portkey";
+import { EntryVars } from "@libs/portkey/portkey-request";
 import {
   BugAgentRequestVariables,
   BugOperationType,
@@ -16,19 +17,22 @@ export const bugEntryNode = async (
   state: any
 ): Promise<{ [key: string]: any }> => {
   try {
-    const vars: BugAgentRequestVariables = {
-      useLanguage: "English",
-      messages: JSON.stringify(state.messages),
+    const vars: EntryVars = {
+      message: JSON.stringify(state.messages[state.messages.length - 1]),
     };
 
+
     const portkey = new BugEntryRequest(vars, BugOperationType.Entry);
-    const resp = await portkey.makeRequest(state.traceId, 'Entry Node',state.userId);
+    const resp = await portkey.makeRequest(
+      state.traceId,
+      "Entry Node",
+      state.userId
+    );
     const responseContent = resp.choices[0].message.content;
     const parsedResponse = JSON.parse(responseContent) as BugEntryResponse;
 
     const { askedQuestion } = parsedResponse;
     return { askedQuestion };
-    
   } catch (error) {
     console.error("Error in bugEntryNode:", error);
     throw new Error(

@@ -2,7 +2,7 @@ import { Portkey } from "portkey-ai";
 import { BugOperationType, BugAgentRequestVariables } from "./types.js";
 
 export interface EntryVars {
-  userMsg: string;
+  message: string;
 }
 
 /**
@@ -61,7 +61,6 @@ export abstract class PortkeyRequest {
     });
 
     const promptId = this.getPromptId(this.promptType);
-
 
     const promptCompletion = await portkey.prompts.completions.create(
       {

@@ -1,6 +1,7 @@
 import { answerQuestionRequest } from "@libs/portkey/bugReporting/anwer-question";
 import { BugAgentRequestVariables, BugOperationType } from "@libs/portkey/types";
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
+import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 interface AnswerQuestionResponse {
   message: string; 
@@ -10,7 +11,7 @@ interface AnswerQuestionResponse {
  * AnswerQuestion is responsible for handling a new part of the bug report process.
  * This is a stub and should be implemented with the actual logic.
  */
-export const answerQuestionNode = async (state: any): Promise<{ [key: string]: any }> => {
+export const answerQuestionNode = async (state: any) => {
 
   try {
     const vars: BugAgentRequestVariables = {
@@ -22,15 +23,22 @@ export const answerQuestionNode = async (state: any): Promise<{ [key: string]: a
     // This would be a new request type specific to the new node's functionality
     const portkey = new answerQuestionRequest(vars, BugOperationType.ANSWER_QUESTION);
 
-    const resp = await portkey.makeRequest();
+    const resp = await portkey.makeRequest(state.traceId, 'Answer Question', state.userId);
     const { message } = JSON.parse(resp.choices[0].message.content) as AnswerQuestionResponse;
 
-    // Add the new message to the state as an assistant message
-    const assistantMessage = new AIMessage(message);
-    state.messages.push(assistantMessage);
+    const stateManager = new StateManager()
+    await stateManager.addMessage(
+      state,
+      "AiMessage",
+      message,
+      true,
+      false
+    );
 
-    // Update the state with the new exampleField value
-    return { ...state, message };
+    return {
+      bugBuildCompleted: false
+    }
+
   } catch (error) {
     console.error("Error in AnswerQuestion:", error);
     throw new Error("Failed to process in AnswerQuestion. Please try again later.");
