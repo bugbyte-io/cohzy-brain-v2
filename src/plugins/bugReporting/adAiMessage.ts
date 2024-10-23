@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { StateManager } from '@libs/bugReportAgents/stateManager';
 import { ChatData } from '@libs/upstash/types';
-import { unknown } from 'zod';
+
 
 /**
  * Route handler for adding an AI-generated message to the chat.
@@ -21,7 +21,7 @@ async function adAiMessageHandler(request: FastifyRequest<{ Body: { traceId: str
     const currentState: ChatData = await stateManager.fetchState(traceId);
 
     if (!currentState) {
-      const state = stateManager.createDefaultState('unknown',traceId)
+      // const state = stateManager.createDefaultState('unknown',traceId)
 
       reply.status(404).send({ message: 'Chat state not found.' });
       return;

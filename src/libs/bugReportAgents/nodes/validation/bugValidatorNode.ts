@@ -4,7 +4,6 @@ import {
   BugAgentRequestVariables,
 } from "@libs/portkey/types";
 import { BugValidationResponse } from "./bugValidationTypes";
-import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 /**

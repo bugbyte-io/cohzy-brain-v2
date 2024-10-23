@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 
-const healthcheck: FastifyPluginAsync = async (fastify, opts) => {
-  fastify.get('/health', async (request, reply) => {
+const healthcheck: FastifyPluginAsync = async (fastify) => {
+  fastify.get('/health', async () => {
     return {
       status: 'ok',
       uptime: process.uptime(),

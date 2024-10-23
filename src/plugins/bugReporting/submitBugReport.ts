@@ -13,9 +13,6 @@ interface saveRequest {
   fileList: Files[]
 }
 
-interface BugReportState {
-
-}
 
 /**
  * Registers the createBugReport endpoint.
@@ -37,7 +34,7 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       bugData.bugReport.files = fileList
       
       const { threadId } = await createNewThread(bugData.bugReport, fileList)
-      const saveData = await createBugReport(bugData, gameId, threadId ?? "")
+      const saveData = await createBugReport(bugData, gameId, threadId ?? "", state.userId)
 
       // Placeholder for bug report creation logic
       reply.code(201).send({bugReportData: saveData });

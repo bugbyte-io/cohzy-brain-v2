@@ -1,14 +1,12 @@
-import { Annotation, BinaryOperatorAggregate } from "@langchain/langgraph";
-import type { AnnotationRoot } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
-import { StateGraph, START, END } from "@langchain/langgraph";
-import { bugValidatorNode } from "./nodes/validation";
-import { bugEntryNode } from "./nodes/entryNode/entryNode";
-import { answerQuestionNode } from "../genericAgent/answerNode";
-import { bugPlausibilityNode } from "./nodes/plausabilityNode";
+import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
+import { graphFlowDecision, graphFlowNode } from "@libs/logging/flowLogger";
 import * as fs from "fs";
-import { graphFlowNode, graphFlowDecision } from "@libs/logging/flowLogger";
+import { answerQuestionNode } from "../genericAgent/answerNode";
 import { bugBuilderNode } from "./nodes/bugBuilderNode";
+import { bugEntryNode } from "./nodes/entryNode/entryNode";
+import { bugPlausibilityNode } from "./nodes/plausabilityNode";
+import { bugValidatorNode } from "./nodes/validation";
 import { StateManager } from "./stateManager";
 
 class BugReportAgentGraph {

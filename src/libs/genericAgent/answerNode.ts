@@ -1,6 +1,5 @@
 import { answerQuestionRequest } from "@libs/portkey/bugReporting/anwer-question";
 import { BugAgentRequestVariables, BugOperationType } from "@libs/portkey/types";
-import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { StateManager } from "@libs/bugReportAgents/stateManager";
 
 interface AnswerQuestionResponse {

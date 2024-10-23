@@ -1,5 +1,5 @@
 import { UpstashHandler } from "../upstash/handler";
-import { ChatData, ChatDataSchema } from "../upstash/types";
+import { ChatData } from "../upstash/types";
 import { nanoid } from "nanoid";
 
 /**

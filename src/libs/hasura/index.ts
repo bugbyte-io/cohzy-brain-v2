@@ -1,4 +1,3 @@
-import { StateManager } from "@libs/bugReportAgents/stateManager";
 import { BugReportEval } from "@libs/bugReportAgents/types";
 
 
@@ -12,7 +11,7 @@ const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_i
 `
 
 
-const createBugReport = async (state: BugReportEval, gameId: string, discordThreadId: string) => {
+export const createBugReport = async (state: BugReportEval, gameId: string, discordThreadId: string, userId: string) => {
   const url = process.env.HASURA_GRAPHQL_ENDPOINT ?? "";
 
   const requestHeaders: HeadersInit = new Headers();
@@ -28,7 +27,7 @@ const createBugReport = async (state: BugReportEval, gameId: string, discordThre
     short_description: state.bugReport.shortDescription,
     observed: state.bugReport.observed,
     game_id: gameId,
-    user_id: '2b65d46a-ca72-4208-ae37-5b7020587d18',
+    user_id: userId,
     discord_thread_id: discordThreadId,
     images: [],
     impact: 1,
@@ -47,4 +46,4 @@ const createBugReport = async (state: BugReportEval, gameId: string, discordThre
   return data
 };
 
-export { createBugReport };
+

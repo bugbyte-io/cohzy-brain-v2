@@ -1,32 +1,33 @@
-import { Client, GatewayIntentBits, TextChannel, AttachmentBuilder, ForumChannel } from 'discord.js';
+import { Client, GatewayIntentBits, AttachmentBuilder, ForumChannel } from 'discord.js';
 import { BugReport } from "@libs/bugReportAgents/types";
 import { Files } from "plugins/bugReporting";
 import fetch from "node-fetch";
 
-const getFileType = (url: string): string => {
-  const extension = url.split('.').pop()?.toLowerCase();
-  switch (extension) {
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    case 'webp':
-      return 'image/webp';
-    case 'mp4':
-      return 'video/mp4';
-    case 'webm':
-      return 'video/webm';
-    case 'txt':
-      return 'text/plain';
-    case 'pdf':
-      return 'application/pdf';
-    default:
-      return 'application/octet-stream';
-  }
-};
+//  Keeping for now in case I need this
+// const getFileType = (url: string): string => {
+//   const extension = url.split('.').pop()?.toLowerCase();
+//   switch (extension) {
+//     case 'jpg':
+//     case 'jpeg':
+//       return 'image/jpeg';
+//     case 'png':
+//       return 'image/png';
+//     case 'gif':
+//       return 'image/gif';
+//     case 'webp':
+//       return 'image/webp';
+//     case 'mp4':
+//       return 'video/mp4';
+//     case 'webm':
+//       return 'video/webm';
+//     case 'txt':
+//       return 'text/plain';
+//     case 'pdf':
+//       return 'application/pdf';
+//     default:
+//       return 'application/octet-stream';
+//   }
+// };
 
 const fetchFiles = async (fileList: Files[]): Promise<AttachmentBuilder[] | null> => {
   const fetchedFiles = await Promise.all(
@@ -38,7 +39,7 @@ const fetchFiles = async (fileList: Files[]): Promise<AttachmentBuilder[] | null
         }
         const buffer = await response.arrayBuffer();
         const filename = file.url.split('/').pop() || 'unknown';
-        const contentType = getFileType(file.url);
+        // const contentType = getFileType(file.url); // I don't remember what this is for right now.
         return new AttachmentBuilder(Buffer.from(buffer), { name: filename });
       } catch (error) {
         console.error(`Error fetching file ${file.url}:`, error);

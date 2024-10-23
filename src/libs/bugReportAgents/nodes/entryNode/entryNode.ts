@@ -1,7 +1,6 @@
 import { BugEntryRequest } from "@libs/portkey";
 import { EntryVars } from "@libs/portkey/portkey-request";
 import {
-  BugAgentRequestVariables,
   BugOperationType,
 } from "@libs/portkey/types";
 
