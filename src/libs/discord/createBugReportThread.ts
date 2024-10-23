@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits, AttachmentBuilder, ForumChannel } from 'disc
 import { BugReport } from "@libs/bugReportAgents/types";
 import { Files } from "plugins/bugReporting";
 import fetch from "node-fetch";
+import { getUserById } from '@libs/hasura';
 
 //  Keeping for now in case I need this
 // const getFileType = (url: string): string => {
@@ -29,6 +30,14 @@ import fetch from "node-fetch";
 //   }
 // };
 
+
+
+
+type UserData = {
+  data: { users_by_pk: {use_name: string} }
+}
+
+
 const fetchFiles = async (fileList: Files[]): Promise<AttachmentBuilder[] | null> => {
   const fetchedFiles = await Promise.all(
     fileList.map(async (file) => {
@@ -50,11 +59,10 @@ const fetchFiles = async (fileList: Files[]): Promise<AttachmentBuilder[] | null
   );
 
   const validFiles = fetchedFiles.filter((file): file is AttachmentBuilder => file !== null);
-  console.log(`Successfully fetched ${validFiles.length} out of ${fileList.length} files`);
   return validFiles;
 };
 
-const createNewThread = async (bugData: BugReport, fileList: Files[]) => {
+const createNewThread = async (bugData: BugReport, fileList: Files[], userId: string) => {
   const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN || "";
   const CHANNEL_ID = process.env.Discord_BOT_CHANNEL || "";
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -67,11 +75,14 @@ const createNewThread = async (bugData: BugReport, fileList: Files[]) => {
       throw new Error('Channel not found or is not a forum channel');
     }
 
+    const userData: UserData = await getUserById(userId)
+    const userName = userData?.data?.users_by_pk?.use_name ?? 'Chip Bot'
+
     const repoSteps = bugData.replicationSteps
       .map((step) => `- ${step}`)
       .join("\n");
 
-    const contentMsg = `Created by {{username}}
+    const contentMsg = `Created by ${userName}
 ### Title:
 ${bugData.shortDescription}
 ### Observed:

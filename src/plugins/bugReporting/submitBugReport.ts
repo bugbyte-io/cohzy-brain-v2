@@ -11,6 +11,7 @@ export interface Files {
 interface saveRequest {
   traceId: string
   fileList: Files[]
+  userId: string
 }
 
 
@@ -24,7 +25,7 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
       
       const gameId = '2641339a-4129-406b-80da-b06281a1b2f6'
 
-      const { traceId, fileList } = request.body as saveRequest
+      const { traceId, fileList, userId } = request.body as saveRequest
     
       const stateManager = new StateManager()
       const state = await stateManager.fetchState(traceId)
@@ -33,8 +34,8 @@ export function registerCreateBugReportRoute(fastify: FastifyInstance): void {
 
       bugData.bugReport.files = fileList
       
-      const { threadId } = await createNewThread(bugData.bugReport, fileList)
-      const saveData = await createBugReport(bugData, gameId, threadId ?? "", state.userId)
+      const { threadId } = await createNewThread(bugData.bugReport, fileList, userId)
+      const saveData = await createBugReport(bugData, gameId, threadId ?? "", userId)
 
       // Placeholder for bug report creation logic
       reply.code(201).send({bugReportData: saveData });

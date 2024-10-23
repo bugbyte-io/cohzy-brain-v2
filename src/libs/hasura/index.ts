@@ -10,10 +10,18 @@ const gqlMsg = `mutation SaveBugReport($expected: String, $files: jsonb, $game_i
 }
 `
 
+const userQuery = `query getUser($id: uuid = "") {
+  users_by_pk(id: $id) {
+    user_name
+  }
+}`
+
+
+
 
 export const createBugReport = async (state: BugReportEval, gameId: string, discordThreadId: string, userId: string) => {
-  const url = process.env.HASURA_GRAPHQL_ENDPOINT ?? "";
 
+  const url = process.env.HASURA_GRAPHQL_ENDPOINT ?? "";
   const requestHeaders: HeadersInit = new Headers();
   requestHeaders.set("Content-Type", "application/json");
   requestHeaders.set("x-hasura-admin-secret", process.env.HASURA_ADMIN_SECRET ?? '');
@@ -43,7 +51,29 @@ export const createBugReport = async (state: BugReportEval, gameId: string, disc
     }),
   });
   const data = await response.json();
+
   return data
 };
 
 
+export const getUserById = async (userId: string) => {
+
+  const url = process.env.HASURA_GRAPHQL_ENDPOINT ?? "";
+  const requestHeaders: HeadersInit = new Headers();
+  requestHeaders.set("Content-Type", "application/json");
+  requestHeaders.set("x-hasura-admin-secret", process.env.HASURA_ADMIN_SECRET ?? '');
+
+  const variables = {id: userId}
+  const response = await fetch(url, {
+    method: "POST",
+    headers: requestHeaders,
+    body: JSON.stringify({
+      query: userQuery,
+      variables
+    }),
+  });
+
+  const data = await response.json();
+  
+  return data
+}

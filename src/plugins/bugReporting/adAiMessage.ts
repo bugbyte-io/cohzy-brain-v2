@@ -14,9 +14,6 @@ async function adAiMessageHandler(request: FastifyRequest<{ Body: { traceId: str
 
     const { traceId, content, display } = request.body;
 
-    console.log({ 'hello': 'world' })
-    console.log('traceId', traceId)
-
     const stateManager = new StateManager();
     const currentState: ChatData = await stateManager.fetchState(traceId);
 
@@ -26,10 +23,6 @@ async function adAiMessageHandler(request: FastifyRequest<{ Body: { traceId: str
       reply.status(404).send({ message: 'Chat state not found.' });
       return;
     }
-
-    console.log("content", content)
-    console.log('display', display)
-
 
     const updatedState = await stateManager.addMessage(currentState, 'AiMessage', content, display);
 
