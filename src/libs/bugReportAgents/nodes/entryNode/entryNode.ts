@@ -17,9 +17,9 @@ export const bugEntryNode = async (
 ): Promise<{ [key: string]: any }> => {
   try {
     const vars: EntryVars = {
-      message: JSON.stringify(state.messages[state.messages.length - 1]),
+      messageHistory: JSON.stringify(state.messages),
+      latestMessage: JSON.stringify(state.messages[state.messages.length - 1]),
     };
-
 
     const portkey = new BugEntryRequest(vars, BugOperationType.Entry);
     const resp = await portkey.makeRequest(

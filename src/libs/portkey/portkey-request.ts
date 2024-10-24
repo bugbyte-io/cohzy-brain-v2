@@ -2,7 +2,8 @@ import { Portkey } from "portkey-ai";
 import { BugOperationType, BugAgentRequestVariables } from "./types.js";
 
 export interface EntryVars {
-  message: string;
+  messageHistory: any
+  latestMessage: string
 }
 
 /**
